@@ -3,14 +3,14 @@ import json
 import threading
 import time
 from contextlib import contextmanager
-from typing import Any, Callable, Iterator
+from typing import Any, Callable, Generator
 
 from bson import ObjectId
 from pymongo import MongoClient
 from pymongo.collection import Collection
 from pymongo.errors import OperationFailure
 
-from config import (
+from configuration.config import (
     MONGO_URI,
     MONGO_COLLECTION,
     MONGO_TIMEOUT_MS,
@@ -27,7 +27,7 @@ from config import (
 
 
 @contextmanager
-def mongo_client() -> Iterator[MongoClient]:
+def mongo_client() -> Generator[MongoClient, None, None]:
     """Ouvre une connexion MongoDB et la ferme toujours à la fin."""
     client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=MONGO_TIMEOUT_MS)
     try:
@@ -37,7 +37,7 @@ def mongo_client() -> Iterator[MongoClient]:
 
 
 @contextmanager
-def mongo_collection() -> Iterator[Collection]:
+def mongo_collection() -> Generator[Collection, None, None]:
     with mongo_client() as client:
         yield client.get_default_database()[MONGO_COLLECTION]
 

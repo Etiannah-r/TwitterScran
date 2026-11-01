@@ -1,7 +1,10 @@
+"""Centralized application settings and X page scripts."""
+
 import os
 from pathlib import Path
 
-# =============================================================================
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+
 # Configuration
 # =============================================================================
 
@@ -20,26 +23,26 @@ MONGO_URI = os.environ.get(
 )
 MONGO_COLLECTION = os.environ.get("MONGO_COLLECTION", "adding_social_accounts")
 MONGO_TIMEOUT_MS = 5000
-SCAN_PROGRESS_EVERY = 20000  # au démarrage : affiche l'avancement tous les N documents lus
+SCAN_PROGRESS_EVERY = 20000  # au d茅marrage : affiche l'avancement tous les N documents lus
 
-# Si la connexion MongoDB échoue : quelques nouvelles tentatives, puis on continue
+# Si la connexion MongoDB 茅choue : quelques nouvelles tentatives, puis on continue
 MONGO_RETRIES = 3
 MONGO_RETRY_DELAY_S = 2
 
-# Champs du document ignorés quand on compare les données de l'entreprise
+# Champs du document ignor茅s quand on compare les donn茅es de l'entreprise
 IGNORED_FIELDS = {"_id", "companyName", "socialAccounts", "numSocialAccounts"}
 
 # --- Recherche X -------------------------------------------------------------
-# Onglets de recherche X : (nom affiché, filtre f=, modèle de requête)
-# {name} est remplacé par le nom de l'entreprise.
+# Onglets de recherche X : (nom affich茅, filtre f=, mod猫le de requ锚te)
+# {name} est remplac茅 par le nom de l'entreprise.
 SEARCH_TABS = [
-    # Onglet « Personnes » sans guillemets pour trouver les variantes.
+    # Onglet 芦 Personnes 禄 sans guillemets pour trouver les variantes.
     ("Personnes", "user", "{name}"),
-    # Onglet « À la une » avec la recherche sans guillemets.
-    ("À la une", "", "{name}"),
+    # Onglet 芦 脌 la une 禄 avec la recherche sans guillemets.
+    ("脌 la une", "", "{name}"),
 ]
-# Termes à exclure pour réduire le bruit si le nom est un mot courant
-# (ex. ["art"] ajoute « -art » à la requête)
+# Termes 脿 exclure pour r茅duire le bruit si le nom est un mot courant
+# (ex. ["art"] ajoute 芦 -art 禄 脿 la requ锚te)
 SEARCH_EXCLUDED_TERMS: list[str] = []
 
 # --- Temporisations / tentatives ---------------------------------------------
@@ -48,28 +51,28 @@ SEARCH_RESULTS_RETRY_INTERVAL_MS = 2000
 MAX_SEARCH_RESULTS_ATTEMPTS = 12
 MAX_PROFILE_ATTEMPTS = 6
 LOGIN_POLL_INTERVAL_MS = 2000
-MAX_LOG_LINES = 500  # le journal garde seulement les dernières lignes
+MAX_LOG_LINES = 500  # le journal garde seulement les derni猫res lignes
 
 # Peu de comptes ressemblants (<= MAX_ACCOUNTS_BEFORE_PICKING_BEST) : on les ajoute tous.
-# Très nombreux : on garde seulement les BEST_ACCOUNTS_KEPT plus ressemblants.
+# Tr猫s nombreux : on garde seulement les BEST_ACCOUNTS_KEPT plus ressemblants.
 MAX_ACCOUNTS_BEFORE_PICKING_BEST = 3
 BEST_ACCOUNTS_KEPT = 1
 
-# Connexion trop longue : on arrête et on demande de relancer le programme
+# Connexion trop longue : on arr锚te et on demande de relancer le programme
 PAGE_LOAD_TIMEOUT_MS = 30000
 
-# Fichier de progression : entreprises déjà traitées (reprise au relancement)
-PROGRESS_FILE = Path(__file__).with_name("x_social_progress.json")
+# Fichier de progression : entreprises d茅j脿 trait茅es (reprise au relancement)
+PROGRESS_FILE = PROJECT_ROOT / "x_social_progress.json"
 
-# Cache local de la liste des entreprises (évite de relire toute la base à chaque lancement)
-SCAN_CACHE_FILE = Path(__file__).with_name("x_social_targets_cache.json")
+# Cache local de la liste des entreprises (茅vite de relire toute la base 脿 chaque lancement)
+SCAN_CACHE_FILE = PROJECT_ROOT / "x_social_targets_cache.json"
 
 # Phases du traitement d'une entreprise
 PHASE_SEARCH = "search"
 PHASE_PROFILE = "profile"
 
 # =============================================================================
-# Scripts JavaScript injectés dans la page X
+# Scripts JavaScript inject茅s dans la page X
 # =============================================================================
 
 LOGGED_IN_JS = """Boolean(document.querySelector(
@@ -137,3 +140,5 @@ PROFILE_SCRIPT = (
 })()
 """
 )
+
+# =============================================================================

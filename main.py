@@ -4,15 +4,15 @@ import time
 
 from PyQt6.QtWidgets import QApplication
 
-from config import MONGO_URI
-from database import (
-    scan_database,
-    with_retry,
+from configuration.config import MONGO_URI
+from connexion.database import (
     load_processed_ids,
     load_scan_cache,
     save_scan_cache,
+    scan_database,
+    with_retry,
 )
-from interface import NameTester
+from interface.interface import NameTester
 
 
 def parse_args() -> argparse.Namespace:
@@ -35,8 +35,6 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
 
-    # Avant de lancer la recherche : connexion à la base + bilan
-    # Mode test (--name) : jamais de cache
     cached = load_scan_cache() if (args.name is None and not args.refresh) else None
     if cached:
         stats, targets = cached
@@ -46,7 +44,10 @@ def main() -> int:
             flush=True,
         )
     else:
-        print("Connexion à MongoDB et lecture de la collection (peut être long)...", flush=True)
+        print(
+            "Connexion à MongoDB et lecture de la collection (peut être long)...",
+            flush=True,
+        )
         started = time.time()
         try:
             stats, targets = with_retry(scan_database, args.name)
@@ -57,12 +58,12 @@ def main() -> int:
         if args.name is None:
             save_scan_cache(stats, targets)
 
-    track_progress = args.name is None  # mode test : pas de fichier de progression
+    track_progress = args.name is None
     already_done = 0
     if track_progress:
         processed = load_processed_ids()
         already_done = len(processed)
-        targets = [t for t in targets if str(t["_id"]) not in processed]
+        targets = [target for target in targets if str(target["_id"]) not in processed]
         print(f"Déjà traitées (reprise) : {already_done}")
 
     print(stats)
@@ -79,10 +80,6 @@ def main() -> int:
     app.exec()
     return 0
 
-
-# =============================================================================
-# Point d'entrée
-# =============================================================================
 
 if __name__ == "__main__":
     raise SystemExit(main())

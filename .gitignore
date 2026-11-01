@@ -1,0 +1,21 @@
+# Fichiers JSON
+*.json
+
+# Fichiers temporaires Python
+__pycache__/
+*.py[cod]
+
+# Variables secrètes
+.env
+.env.*
+
+# Environnements virtuels Python
+venv/
+.venv/
+
+# Fichiers système Windows
+Thumbs.db
+Desktop.ini
+
+# Logs
+*.log
