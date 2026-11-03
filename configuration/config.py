@@ -13,6 +13,7 @@ X_SEARCH_URL = "https://x.com/search"
 X_PROFILE_URL = "https://x.com/{username}"
 
 NAME_THRESHOLD = 30  # % minimum de ressemblance du NOM pour garder le lien
+MAX_LINKS_PER_COMPANY = 10
 
 # --- MongoDB -----------------------------------------------------------------
 # La base est lue directement dans l'URI.

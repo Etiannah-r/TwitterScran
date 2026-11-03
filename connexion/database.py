@@ -19,6 +19,7 @@ from configuration.config import (
     SCAN_PROGRESS_EVERY,
     PROGRESS_FILE,
     SCAN_CACHE_FILE,
+    MAX_LINKS_PER_COMPANY,
 )
 
 # =============================================================================
@@ -325,7 +326,7 @@ def save_to_mongo(doc_id: Any, accounts: list[dict[str, Any]]) -> int:
                 "name": account["name"],
                 "percentage": f"{account['score']}%",
             }
-            for account in accounts
+            for account in accounts[:MAX_LINKS_PER_COMPANY]
         ]
         # nombre de réseaux sociaux ayant au moins un compte
         num_social_accounts = sum(1 for links in social_accounts.values() if links)
