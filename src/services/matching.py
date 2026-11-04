@@ -3,7 +3,12 @@ from difflib import SequenceMatcher
 from typing import Any
 from urllib.parse import urlencode, urlparse
 
-from configuration.config import IGNORED_FIELDS, NAME_THRESHOLD, X_SEARCH_URL, SEARCH_EXCLUDED_TERMS
+from config.settings import (
+    IGNORED_FIELDS,
+    NAME_THRESHOLD,
+    SEARCH_EXCLUDED_TERMS,
+    X_SEARCH_URL,
+)
 
 # =============================================================================
 # Ressemblance du NOM

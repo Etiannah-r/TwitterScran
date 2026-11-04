@@ -6,7 +6,7 @@ from PyQt6.QtWebEngineCore import QWebEnginePage, QWebEngineProfile
 from PyQt6.QtWebEngineWidgets import QWebEngineView
 from PyQt6.QtWidgets import QLabel, QMainWindow, QTextEdit, QVBoxLayout, QWidget
 
-from configuration.config import (
+from config.settings import (
     X_HOME_URL,
     X_PROFILE_URL,
     NAME_THRESHOLD,
@@ -26,8 +26,18 @@ from configuration.config import (
     SEARCH_RESULTS_SCRIPT,
     PROFILE_SCRIPT,
 )
-from Calcul.matching import name_similarity, data_similarity, flatten_fields, search_url
-from connexion.database import with_retry, load_company, save_to_mongo, mark_processed
+from src.infrastructure.database import (
+    load_company,
+    mark_processed,
+    save_to_mongo,
+    with_retry,
+)
+from src.services.matching import (
+    data_similarity,
+    flatten_fields,
+    name_similarity,
+    search_url,
+)
 
 
 class NameTester(QMainWindow):

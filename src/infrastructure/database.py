@@ -10,7 +10,10 @@ from pymongo import MongoClient
 from pymongo.collection import Collection
 from pymongo.errors import OperationFailure
 
-from configuration.config import (
+from config.settings import (
+    DATA_DIR,
+    LEGACY_PROGRESS_FILE,
+    LEGACY_SCAN_CACHE_FILE,
     MONGO_URI,
     MONGO_COLLECTION,
     MONGO_TIMEOUT_MS,
@@ -349,16 +352,20 @@ def save_to_mongo(doc_id: Any, accounts: list[dict[str, Any]]) -> int:
 
 def load_processed_ids() -> set[str]:
     """Identifiants des entreprises déjà traitées lors des lancements précédents."""
-    try:
-        return set(json.loads(PROGRESS_FILE.read_text(encoding="utf-8")))
-    except (OSError, ValueError):
-        return set()
+    processed: set[str] = set()
+    for path in (PROGRESS_FILE, LEGACY_PROGRESS_FILE):
+        try:
+            processed.update(json.loads(path.read_text(encoding="utf-8")))
+        except (OSError, ValueError):
+            continue
+    return processed
 
 
 def mark_processed(doc_id: Any) -> None:
     """Mémorise qu'une entreprise est traitée (avec ou sans lien trouvé)."""
     processed = load_processed_ids()
     processed.add(str(doc_id))
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
     PROGRESS_FILE.write_text(json.dumps(sorted(processed)), encoding="utf-8")
 
 
@@ -382,19 +389,22 @@ def save_scan_cache(stats: str, targets: list[dict[str, Any]]) -> None:
         "ids": [str(target["_id"]) for target in targets],
         "names": [target["companyName"] for target in targets],
     }
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
     SCAN_CACHE_FILE.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
 
 
 def load_scan_cache() -> tuple[str, list[dict[str, Any]]] | None:
     """Liste mise en cache pour cette base, ou None s'il n'y en a pas."""
-    try:
-        data = json.loads(SCAN_CACHE_FILE.read_text(encoding="utf-8"))
-        if data.get("key") != cache_key():
-            return None
-        targets = [
-            {"_id": ObjectId(doc_id), "companyName": name}
-            for doc_id, name in zip(data["ids"], data["names"])
-        ]
-        return data["stats"], targets
-    except Exception:  # noqa: BLE001
-        return None
+    for path in (SCAN_CACHE_FILE, LEGACY_SCAN_CACHE_FILE):
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+            if data.get("key") != cache_key():
+                continue
+            targets = [
+                {"_id": ObjectId(doc_id), "companyName": name}
+                for doc_id, name in zip(data["ids"], data["names"])
+            ]
+            return data["stats"], targets
+        except Exception:  # noqa: BLE001
+            continue
+    return None

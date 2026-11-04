@@ -8,6 +8,8 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 # Configuration
 # =============================================================================
 
+DATA_DIR = PROJECT_ROOT / "data"
+
 X_HOME_URL = "https://x.com/home"
 X_SEARCH_URL = "https://x.com/search"
 X_PROFILE_URL = "https://x.com/{username}"
@@ -63,10 +65,12 @@ BEST_ACCOUNTS_KEPT = 1
 PAGE_LOAD_TIMEOUT_MS = 30000
 
 # Fichier de progression : entreprises d茅j脿 trait茅es (reprise au relancement)
-PROGRESS_FILE = PROJECT_ROOT / "x_social_progress.json"
+PROGRESS_FILE = DATA_DIR / "x_social_progress.json"
+LEGACY_PROGRESS_FILE = PROJECT_ROOT / "x_social_progress.json"
 
 # Cache local de la liste des entreprises (茅vite de relire toute la base 脿 chaque lancement)
-SCAN_CACHE_FILE = PROJECT_ROOT / "x_social_targets_cache.json"
+SCAN_CACHE_FILE = DATA_DIR / "x_social_targets_cache.json"
+LEGACY_SCAN_CACHE_FILE = PROJECT_ROOT / "x_social_targets_cache.json"
 
 # Phases du traitement d'une entreprise
 PHASE_SEARCH = "search"

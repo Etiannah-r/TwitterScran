@@ -1,13 +1,10 @@
 # Fichiers JSON
 *.json
+data/
 
 # Fichiers temporaires Python
 __pycache__/
 *.py[cod]
-*.pyc
-.env
-venv/
-.venv/
 
 # Variables secrètes
 .env
@@ -23,4 +20,3 @@ Desktop.ini
 
 # Logs
 *.log
-
